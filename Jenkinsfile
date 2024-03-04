@@ -5,6 +5,10 @@ pipeline {
         ansiColor('xterm')
     }
 
+    parameters {
+        string(name: 'APP_INPUT', defaultValue: '', description: 'Just Input')
+    }
+
     environment {
         SSH = credentials('SSH')
         DEMO_URL = "google.com"
