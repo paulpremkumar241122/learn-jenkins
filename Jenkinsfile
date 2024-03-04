@@ -12,6 +12,7 @@ pipeline {
             steps {
                 echo 'Hello World - from pipeline SCM'
                 sh 'env'
+                sh 'DEMO_URL'
             }
         }
     }
