@@ -1,49 +1,102 @@
+//pipeline {
+//
+//    agent { node { label 'workstation' } }
+//    options {
+//        ansiColor('xterm')
+//    }
+//    triggers { pollSCM('H/2 * * * *') }
+//
+//    parameters {
+//        string(name: 'APP_INPUT', defaultValue: '', description: 'Just Input')
+//    }
+//
+//    environment {
+//        SSH = credentials('SSH')
+//        DEMO_URL = "google.com"
+//    }
+//
+//    stages {
+//        stage('Hello World - from pipeline SCM') {
+//            input {
+//                message "Should we continue?"
+//                ok "Yes, we should."
+//                }
+//            steps {
+//                echo 'Hello World - from pipeline SCM'
+//                sh 'env'
+//                sh 'echo APP_INPUT - $APP_INPUT'
+//            }
+//        }
+//
+//        stage('Example Deploy') {
+//            when {
+//                branch 'production'
+//            }
+//            steps {
+//                echo 'Deploying'
+//            }
+//        }
+//    }
+//
+//    post {
+//        always {
+//            sh 'echo post'
+//        }
+//    }
+//}
+//
+//
+////
+
+
 pipeline {
-
-    agent { node { label 'workstation' } }
-    options {
-        ansiColor('xterm')
-    }
-    triggers { pollSCM('H/2 * * * *') }
-
-    parameters {
-        string(name: 'APP_INPUT', defaultValue: '', description: 'Just Input')
-    }
-
-    environment {
-        SSH = credentials('SSH')
-        DEMO_URL = "google.com"
-    }
-
+    agent any
     stages {
-        stage('Hello World - from pipeline SCM') {
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                }
+        stage('Non-Parallel Stage') {
             steps {
-                echo 'Hello World - from pipeline SCM'
-                sh 'env'
-                sh 'echo APP_INPUT - $APP_INPUT'
+                echo 'This stage will be executed first.'
             }
         }
-
-        stage('Example Deploy') {
+        stage('Parallel Stage') {
             when {
-                branch 'production'
+                branch 'master'
             }
-            steps {
-                echo 'Deploying'
+            failFast true
+            parallel {
+                stage('Branch A') {
+                    agent {
+                        label "for-branch-a"
+                    }
+                    steps {
+                        echo "On Branch A"
+                    }
+                }
+                stage('Branch B') {
+                    agent {
+                        label "for-branch-b"
+                    }
+                    steps {
+                        echo "On Branch B"
+                    }
+                }
+                stage('Branch C') {
+                    agent {
+                        label "for-branch-c"
+                    }
+                    stages {
+                        stage('Nested 1') {
+                            steps {
+                                echo "In stage Nested 1 within Branch C"
+                            }
+                        }
+                        stage('Nested 2') {
+                            steps {
+                                echo "In stage Nested 2 within Branch C"
+                            }
+                        }
+                    }
+                }
             }
-        }
-    }
-
-    post {
-        always {
-            sh 'echo post'
         }
     }
 }
-
-
-//
