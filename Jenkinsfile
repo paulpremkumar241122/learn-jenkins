@@ -1,6 +1,9 @@
 pipeline {
 
     agent { node { label 'workstation' } }
+    options {
+        ansiColor('xterm')
+    }
 
     environment {
         SSH = credentials('SSH')
