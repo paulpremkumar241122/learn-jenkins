@@ -24,6 +24,16 @@ pipeline {
             steps {
                 echo 'Hello World - from pipeline SCM'
                 sh 'env'
+                sh 'echo APP_INPUT - $APP_INPUT'
+            }
+        }
+
+        stage('Example Deploy') {
+            when {
+                branch 'production'
+            }
+            steps {
+                echo 'Deploying'
             }
         }
     }
