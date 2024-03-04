@@ -17,6 +17,10 @@ pipeline {
 
     stages {
         stage('Hello World - from pipeline SCM') {
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+                }
             steps {
                 echo 'Hello World - from pipeline SCM'
                 sh 'env'
